@@ -16,23 +16,29 @@ class HomeScreen extends StatelessWidget {
   var dateController = TextEditingController();
   var scaffoldKey = GlobalKey<ScaffoldState>();
   var formKey = GlobalKey<FormState>();
-  int currentIndex = 0;
 
-  List<Widget> screens = [
+  List<Widget> screens = <Widget>[
     TasksScreen(),
-    const DoneScreen(),
-    const ArchivedScreen(),
+    DoneScreen(),
+    ArchivedScreen(),
+  ];
+
+  List titles = [
+    'New Tasks',
+    'Done Tasks',
+    'Archived Tasks'
   ];
 
   @override
   Widget build(BuildContext context) {
+    int index = context.watch<DatabaseProvider>().currentIndex;
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
         //centerTitle: true,
-        title: const Text(
-          'Todo App',
-          style: TextStyle(
+        title: Text(
+          '${titles[index]}',
+          style: const TextStyle(
               color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),
         ),
         backgroundColor: Colors.purple,
@@ -45,7 +51,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: screens[currentIndex],
+      body: screens[index],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showValidationDialog(context);
@@ -54,11 +60,9 @@ class HomeScreen extends StatelessWidget {
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: context.read<DatabaseProvider>().currentIndex,
         onTap: (index) {
-          /*setState(() {
-            currentIndex = index;
-          });*/
+          context.read<DatabaseProvider>().changeIndex(index);
         },
         items: const [
           BottomNavigationBarItem(

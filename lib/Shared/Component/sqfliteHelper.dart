@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/Shared/Component/model.dart';
 
 class SqliteHelper {
+
   getDatabase() async {
     Database? database;
     if (database == null) {
@@ -41,6 +42,9 @@ class SqliteHelper {
     Database database = await getDatabase();
     List<Map> maps = await database.query('tasks');
     List<Map> generatedList = [];
+    List<Map> newTasksList = [];
+    List<Map> doneTasksList = [];
+    List<Map> archivedTasksList = [];
     for (int i = 0; i < maps.length; i++) {
       Map generatedMap = {
         "id": maps[i]["id"],
@@ -50,6 +54,13 @@ class SqliteHelper {
         "status": maps[i]["status"]
       };
       generatedList.add(generatedMap);
+      if (generatedMap["status"] == "new") {
+        newTasksList.add(generatedMap);
+      } else if (generatedMap["status"] == "done") {
+        doneTasksList.add(generatedMap);
+      } else if (generatedMap["status"] == "archived") {
+        archivedTasksList.add(generatedMap);
+      }
     }
     return generatedList;
   }
@@ -60,7 +71,19 @@ class SqliteHelper {
         'tasks',
         model.toMap(),
         where: 'id = ?',
-        whereArgs: [model.id]
+        whereArgs: [model.id],
+      conflictAlgorithm: ConflictAlgorithm.replace
+    );
+  }
+
+  Future updateStatus(ModelDatabase model) async {
+    Database database = await getDatabase();
+    await database.update(
+        'tasks',
+        {'status': model.status}, // Update only the "status" field
+        where: 'id = ?',
+        whereArgs: [model.id],
+        conflictAlgorithm: ConflictAlgorithm.replace
     );
   }
 

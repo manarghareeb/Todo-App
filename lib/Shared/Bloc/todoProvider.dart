@@ -29,4 +29,31 @@ class DatabaseProvider with ChangeNotifier {
     await sqliteHelper.updateData(model);
     notifyListeners();
   }
+
+  Future updateStatus(ModelDatabase model) async {
+    await sqliteHelper.updateStatus(model);
+    notifyListeners();
+  }
+
+  int currentIndex = 0;
+  changeIndex (int index){
+    currentIndex = index;
+    notifyListeners();
+  }
+
+  bool isCheckIcon = false;
+  IconData checkIcon = Icons.check_box_outline_blank;
+  Color iconColor = Colors.black;
+  int idOfList = 0;
+  changeCheckBoxIcon ({
+    required bool isShow,
+    required IconData icon,
+    required Color color,
+    required int id
+}){
+    isCheckIcon = isShow;
+   checkIcon = icon;
+   iconColor = color;
+   notifyListeners();
+  }
 }
