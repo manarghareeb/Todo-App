@@ -14,8 +14,9 @@ class HomeScreen extends StatelessWidget {
   var taskController = TextEditingController();
   var timeController = TextEditingController();
   var dateController = TextEditingController();
-  var scaffoldKey = GlobalKey<ScaffoldState>();
   var formKey = GlobalKey<FormState>();
+  bool isChangeButton = false;
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<Widget> screens = <Widget>[
     TasksScreen(),
@@ -184,6 +185,7 @@ class HomeScreen extends StatelessWidget {
                                 time: timeController.text,
                                 date: dateController.text,
                                 status: 'new',
+                                archived: 'new'
                               ),
                             );
                             taskController.clear();

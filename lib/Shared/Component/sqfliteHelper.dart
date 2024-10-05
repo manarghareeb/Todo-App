@@ -23,7 +23,7 @@ class SqliteHelper {
         print('database created');
         await database
             .execute(
-                'CREATE TABLE tasks (id INTEGER PRIMARY KEY autoincrement, title TEXT, date TEXT, time TEXT, status TEXT)')
+                'CREATE TABLE tasks (id INTEGER PRIMARY KEY autoincrement, title TEXT, date TEXT, time TEXT, status TEXT, archived TEXT)')
             .then((value) {
           print('table created');
         }).catchError((error) {
@@ -42,25 +42,29 @@ class SqliteHelper {
     Database database = await getDatabase();
     List<Map> maps = await database.query('tasks');
     List<Map> generatedList = [];
-    List<Map> newTasksList = [];
+    /*List<Map> newTasksList = [];
     List<Map> doneTasksList = [];
-    List<Map> archivedTasksList = [];
+    List<Map> archivedTasksList = [];*/
     for (int i = 0; i < maps.length; i++) {
       Map generatedMap = {
         "id": maps[i]["id"],
         "title": maps[i]["title"],
         "date": maps[i]["date"],
         "time": maps[i]["time"],
-        "status": maps[i]["status"]
+        "status": maps[i]["status"],
+        "archived": maps[i]["archived"]
       };
       generatedList.add(generatedMap);
-      if (generatedMap["status"] == "new") {
+      /*if (generatedMap["status"] == "new") {
         newTasksList.add(generatedMap);
+        return newTasksList;
       } else if (generatedMap["status"] == "done") {
         doneTasksList.add(generatedMap);
+        return doneTasksList;
       } else if (generatedMap["status"] == "archived") {
         archivedTasksList.add(generatedMap);
-      }
+        return archivedTasksList;
+      }*/
     }
     return generatedList;
   }
@@ -76,14 +80,25 @@ class SqliteHelper {
     );
   }
 
-  Future updateStatus(ModelDatabase model) async {
+  Future updateStatus(int id, String status) async {
     Database database = await getDatabase();
     await database.update(
-        'tasks',
-        {'status': model.status}, // Update only the "status" field
-        where: 'id = ?',
-        whereArgs: [model.id],
-        conflictAlgorithm: ConflictAlgorithm.replace
+      'tasks',
+      {'status': status}, // Update only the status field
+      where: 'id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future updateArchived(int id, String archived) async {
+    Database database = await getDatabase();
+    await database.update(
+      'tasks',
+      {'archived': archived}, // Update only the archived field
+      where: 'id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 

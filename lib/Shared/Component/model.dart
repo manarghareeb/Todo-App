@@ -4,6 +4,7 @@ class ModelDatabase {
   String date;
   String time;
   String status;
+  String archived;
 
   ModelDatabase({
     this.id,
@@ -11,6 +12,7 @@ class ModelDatabase {
     required this.date,
     required this.time,
     required this.status,
+    required this.archived
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class ModelDatabase {
       'date': date,
       'time': time,
       'status': status,
+      'archived': archived
     };
   }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Shared/Component/sqfliteHelper.dart';
-
 import '../Component/model.dart';
 
 class DatabaseProvider with ChangeNotifier {
@@ -30,8 +29,13 @@ class DatabaseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future updateStatus(ModelDatabase model) async {
-    await sqliteHelper.updateStatus(model);
+  Future updateStatus(int id, String status) async {
+    await sqliteHelper.updateStatus(id, status);
+    notifyListeners();
+  }
+
+  Future updateArchived(int id, String archived) async {
+    await sqliteHelper.updateArchived(id, archived);
     notifyListeners();
   }
 
@@ -41,19 +45,31 @@ class DatabaseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool isCheckIcon = false;
-  IconData checkIcon = Icons.check_box_outline_blank;
-  Color iconColor = Colors.black;
-  int idOfList = 0;
+  bool isChecked = false;
+  bool isArchived = false;
+  List<int> doneIndex = [];
+  List<int> archivedIndex = [];
+
   changeCheckBoxIcon ({
-    required bool isShow,
-    required IconData icon,
-    required Color color,
-    required int id
+    required int index,
 }){
-    isCheckIcon = isShow;
-   checkIcon = icon;
-   iconColor = color;
-   notifyListeners();
+    isChecked = !isChecked;
+    doneIndex.add(index);
+    updateStatus(index, 'done');
+    updateArchived(index, 'new');
+    notifyListeners();
+  }
+
+  changeArchived ({required int index}){
+    isArchived = !isArchived;
+    archivedIndex.add(index);
+    if(isArchived == true) {
+      updateArchived(index, 'archived');
+      notifyListeners();
+    }
+    else {
+      updateArchived(index, 'new');
+      notifyListeners();
+    }
   }
 }
